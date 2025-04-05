@@ -7,10 +7,10 @@ from integration import forward_euler, runge_kutta_4
 
 def f(p, ux, uy, interpolate=True):
     # If out of bounds, return 0s
-    if p[0] < 0 or p[0] >= ux.shape[0] or p[1] < 0 or p[1] >= ux.shape[1]:
+    pr = np.array([round(p[1]), round(p[0])])
+    if pr[0] < 0 or pr[0] >= ux.shape[0] or pr[1] < 0 or pr[1] >= ux.shape[1]:
         return np.array([0,0])
-    p = np.array([round(p[1]), round(p[0])])
-    return np.array([ux[*p], uy[*p]])
+    return np.array([ux[*pr], uy[*pr]])
 
 def field_line(ux, uy, p0, nstep, dx=0.1, integrator=forward_euler, backwards=False):
     """

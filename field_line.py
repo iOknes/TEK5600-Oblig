@@ -29,12 +29,6 @@ def field_line(ux, uy, p0, nstep, dx=0.1, integrator=forward_euler, backwards=Fa
             pb_next = integrator(line_b[-1], f, ux, uy, dx, backwards=True)
             length += np.linalg.norm(pb_next - line_b[-1])
             line_b.append(pb_next)
-        if np.all(line_f[-1] == line_f[-2]):
-            # End calculation if the line has not moved
-            return np.array(line_b[-1:0:-1] + line_f)
-        if len(line_b) > 1:
-            if np.all(line_b[-1] == line_b[-2]):
-                return np.array(line_b[-1:0:-1] + line_f)
 
     return np.array(line_b[-1:0:-1] + line_f)
 

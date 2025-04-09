@@ -9,7 +9,7 @@ def noise_texture(nx, ny, level=255):
 def convolute():
     pass
 
-def lic(ux, uy, image: np.ndarray, line_len=0.5, integrator=forward_euler):
+def lic(ux, uy, image: np.ndarray, line_len=0.5, integrator="fe"):
     output = np.zeros(image.shape)
     fll = line_len * np.average(ux.shape)
     lx, ly = ux.shape

@@ -1,7 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
-from numba import jit
 
 from read_data import read_h5, read_h5_yx
 from seeding import seed_uniform, seed_random, seed_vorticity
@@ -14,7 +11,7 @@ def f(p: np.ndarray, ux: np.ndarray, uy: np.ndarray):
         return np.array([0,0])
     return np.array([ux[pr[0], pr[1]], uy[pr[0], pr[1]]])
 
-def field_line(ux, uy, p0, l, dx=0.2, n_max=10000, integrator="fe", backwards=True):
+def field_line(ux, uy, p0, l, dx=0.2, n_max=10000, integrator="fe", backwards=True, normalise=True):
     """
     ## Parameters:
         - l_max: length of field line in either direction
@@ -33,9 +30,9 @@ def field_line(ux, uy, p0, l, dx=0.2, n_max=10000, integrator="fe", backwards=Tr
         if not f_stall:
             #p_next = integrator(line_f[-1], ux, uy, dx)
             if integrator == "fe":
-                p_next = forward_euler(line_f[-1], ux, uy, dx)
+                p_next = forward_euler(line_f[-1], ux, uy, dx, normalise=normalise)
             elif integrator == "rk4":
-                p_next = runge_kutta_4(line_f[-1], ux, uy, dx)
+                p_next = runge_kutta_4(line_f[-1], ux, uy, dx, normalise=normalise)
             else:
                 p_next = None
 
@@ -46,9 +43,9 @@ def field_line(ux, uy, p0, l, dx=0.2, n_max=10000, integrator="fe", backwards=Tr
         if backwards and not b_stall:
             #pb_next = integrator(line_b[-1], -ux, -uy, dx)
             if integrator == "fe":
-                pb_next = forward_euler(line_b[-1], -ux, -uy, dx)
+                pb_next = forward_euler(line_b[-1], -ux, -uy, dx, normalise=normalise)
             elif integrator == "rk4":
-                pb_next = runge_kutta_4(line_b[-1], -ux, -uy, dx)
+                pb_next = runge_kutta_4(line_b[-1], -ux, -uy, dx, normalise=normalise)
             else:
                 pb_next = None
 
@@ -72,7 +69,7 @@ def generate_field_lines(ux, uy, length, n_seeds, dx=0.2, seeding="uniform", int
     else:
         raise ValueError(f"Seeding must be of valid type, not {seeding}")
     #p0 = seedingf(0, ux.shape[0] - 1, 0, uy.shape[1] - 1, n_seeds)
-    fl = [field_line(ux, uy, i, length * ux.shape[0], dx=dx, integrator=integrator, backwards=backwards) for i in p0]
+    fl = [field_line(ux, uy, i, length * ux.shape[0], dx=dx, integrator=integrator, backwards=backwards, normalise=False) for i in p0]
     return fl
 
 def plot_field_lines(ax, fl, metsim=False):
